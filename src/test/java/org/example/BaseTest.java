@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
 import org.example.dto.IssueDTO;
 import org.example.dto.ProjectDTO;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.TestInfo;
@@ -15,20 +16,23 @@ import static org.hamcrest.Matchers.*;
 
 public class BaseTest {
 
-    protected static RequestSpecification request;
-    protected List<String> createdIssues = new ArrayList<>();
+    static protected List<String> createdIssues = new ArrayList<>();
 
     @BeforeAll
     public static void setup() {
         RestAssured.baseURI = "http://localhost:9091";
         RestAssured.useRelaxedHTTPSValidation();
+        System.out.println("========= BaseTest setup completed =========");
+    }
 
-        request = RestAssured.given()
-                .header("Authorization", "Bearer perm-YWRtaW4=.NDQtMA==.2tVNLGVkhOpOMaJYo7FNssrkPJvia4")
+    static protected RequestSpecification request() {
+        return RestAssured
+                .given()
+                .header("Authorization", "Bearer perm-YWRtaW4=.NDMtMA==.Ohnd7h2sKBXtuMRaPgfd1woEFmAG4M")
                 .contentType("application/json")
                 .log().ifValidationFails();
-
-        System.out.println("========= BaseTest setup completed =========");
+        // perm-YWRtaW4=.NDMtMA==.Ohnd7h2sKBXtuMRaPgfd1woEFmAG4M - pc
+        // perm-YWRtaW4=.NDQtMA==.2tVNLGVkhOpOMaJYo7FNssrkPJvia4 laptop
     }
 
     @AfterEach
@@ -36,10 +40,10 @@ public class BaseTest {
         System.out.println("========= Test: " + info.getDisplayName() + " =========");
     }
 
-    @AfterEach
-    void cleanUp() {
+   @AfterAll
+    static void cleanUp() {
         for (String issuedId : createdIssues) {
-            request
+            request()
                     .delete("/api/issues/" + issuedId)
                     .then()
                     .statusCode(anyOf(is(200), is(404)));
@@ -50,7 +54,7 @@ public class BaseTest {
     public String createIssueAndGetId(String summary, String description, String projectId) {
         IssueDTO issueDTO = new IssueDTO(summary, description, new ProjectDTO(projectId));
 
-        String issueId = request
+        String issueId = request()
                 .body(issueDTO)
                 .when()
                 .post("/api/issues")

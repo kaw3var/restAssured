@@ -10,11 +10,10 @@ import org.junit.jupiter.api.*;
 public class IssueNegativeTest extends BaseTest {
 
     @Test
-    @Order(1)
     @DisplayName("TC-N1: Ошибка при создании Issue без summary")
     void createIssue_withoutSummary_shouldReturn400() {
         IssueDTO issueDTO = new IssueDTO(null, "Test description", new ProjectDTO("0-0"));
-        request
+        request()
                 .body(issueDTO)
                 .when()
                 .post("/api/issues")
@@ -23,10 +22,9 @@ public class IssueNegativeTest extends BaseTest {
     }
 
     @Test
-    @Order(2)
     @DisplayName("TC-N2: Получение Issue, которого не существует")
     void getNotExistingIssue_shouldReturn404() {
-        request
+        request()
                 .when()
                 .get("/api/issues/NotExistingIssue")
                 .then()
@@ -34,14 +32,13 @@ public class IssueNegativeTest extends BaseTest {
     }
 
     @Test
-    @Order(3)
     @DisplayName("TC-N3: Ошибка при отправке некорректного JSON")
     void updateIssue_invalidJson_shouldReturn400() {
         String issueId = createIssueAndGetId("Test summary", "Test description", "0-0");
 
         String invalidJson = "summary: test";
 
-        request
+        request()
                 .body(invalidJson)
                 .when()
                 .put("/api/issues/" + issueId)
@@ -50,19 +47,18 @@ public class IssueNegativeTest extends BaseTest {
     }
 
     @Test
-    @Order(4)
     @DisplayName("TC-N4: Ошибка при добавлении комментария к удалённому Issue")
     void addComment_toDeletedIssue_shouldReturn404() {
         String issueId = createIssueAndGetId("Test summary", "Test description", "0-0");
 
-        request
+        request()
                 .when()
                 .delete("/api/issues/" + issueId)
                 .then()
                 .statusCode(200);
 
         CommentDTO comment = new CommentDTO("Test Comment after delete");
-        request
+        request()
                 .body(comment)
                 .when()
                 .post("/api/issues/" + issueId + "/comments")
@@ -71,12 +67,11 @@ public class IssueNegativeTest extends BaseTest {
     }
 
     @Test
-    @Order(5)
     @DisplayName("TC-N5: Ошибка при удалении Issue в другом проекте")
     void deleteIssue_withoutPermissions_shouldReturn404() {
         String restrictedId = "2-1";
 
-        request
+        request()
                 .when()
                 .delete("/api/issues/" + restrictedId)
                 .then()
