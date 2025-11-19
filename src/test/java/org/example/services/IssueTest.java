@@ -14,8 +14,16 @@ public class IssueTest extends BaseTest {
     private String issueId;
 
     @BeforeEach
-    void createIssueForTest() {
+    void createIssue() {
         issueId = createIssueAndGetId("Test summary", "Test description", "0-0");
+    }
+
+    @AfterEach
+    void cleanupIssue() {
+        request()
+                .delete("/api/issues/" + issueId)
+                .then()
+                .statusCode(anyOf(is(200), is(404)));
     }
 
     @Test
@@ -122,5 +130,10 @@ public class IssueTest extends BaseTest {
                 .body("description", equalTo(description));
 
         System.out.println("Created from CSV Issue: " + csvIssueId);
+
+        request()
+                .delete("/api/issues/" + csvIssueId)
+                .then()
+                .statusCode(anyOf(is(200), is(404)));
     }
 }

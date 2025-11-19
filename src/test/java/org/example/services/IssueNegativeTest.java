@@ -6,6 +6,9 @@ import org.example.dto.IssueDTO;
 import org.example.dto.ProjectDTO;
 import org.junit.jupiter.api.*;
 
+import static org.hamcrest.Matchers.anyOf;
+import static org.hamcrest.Matchers.is;
+
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class IssueNegativeTest extends BaseTest {
 
@@ -44,6 +47,11 @@ public class IssueNegativeTest extends BaseTest {
                 .put("/api/issues/" + issueId)
                 .then()
                 .statusCode(400);
+
+        request()
+                .delete("/api/issues/" + issueId)
+                .then()
+                .statusCode(anyOf(is(200), is(404)));
     }
 
     @Test
