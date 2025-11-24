@@ -1,15 +1,14 @@
-package org.example.services;
+package org.example.pages;
 
 import org.example.BasePageTest;
-import org.example.pages.DashboardPage;
-import org.example.pages.LoginPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.CsvSource;
 
-public class LoginTest extends BasePageTest {
+public class LoginPageTest extends BasePageTest {
 
     @DisplayName("TC-L1: Успешный логин (валидные данные)")
     @ParameterizedTest(name = "Логин: {0}")
@@ -26,11 +25,9 @@ public class LoginTest extends BasePageTest {
                 "Вход не выполнен: Не найдены элементы 'Issues' или 'admin' на странице.");
     }
 
-    @DisplayName("TC-L2: Неуспешный логин — неверный пароль")
     @ParameterizedTest(name = "User: {0}, Pass: {1}")
-    @CsvSource({
-            "admin, wrongPass123"
-    })
+    @DisplayName("TC-L2: Неуспешный логин — неверный логин или пароль из CSV")
+    @CsvFileSource(resources = "/login.csv", numLinesToSkip = 1)
     public void testLoginWithInvalidPassword(String username, String wrongPassword) {
         LoginPage loginPage = new LoginPage(getDriver());
         loginPage.login(username, wrongPassword);

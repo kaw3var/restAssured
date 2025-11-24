@@ -116,7 +116,7 @@ public class IssueTest extends BaseTest {
 
     @ParameterizedTest
     @DisplayName("Создание Issue из CSV")
-    @CsvFileSource(resources = "/issues.csv", numLinesToSkip = 1)
+    @CsvFileSource(resources = "/create-issues.csv", numLinesToSkip = 1)
     void createIssue_csvFile_shouldReturn200AndId(String summary, String description, String projectId) {
         String csvIssueId = createIssueAndGetId(summary, description, projectId);
 

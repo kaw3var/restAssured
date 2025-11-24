@@ -2,8 +2,10 @@ package org.example.pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.time.Duration;
 
 public class CreateIssuePage {
@@ -14,24 +16,35 @@ public class CreateIssuePage {
     private By descriptionContent = By.xpath("//div[@data-test='wysiwyg-editor-content']");
     private By createButtonDisabled = By.xpath("//button[@data-test='submit-button'][@disabled]");
     private By createButton = By.xpath("//button[@data-test='submit-button' and contains(span/span, 'Create')]");
-    private By requiredError = By.xpath("//*[contains(text(), 'Summary is required')]");
 
     public CreateIssuePage(WebDriver driver) {
         this.driver = driver;
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
+    private WebElement waitForVisible(By locator) {
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+    }
+
+    private WebElement waitForClickable(By locator) {
+        return wait.until(ExpectedConditions.elementToBeClickable(locator));
+    }
+
     public void enterSummary(String summary) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(summaryField)).sendKeys(summary);
+        WebElement field = waitForVisible(summaryField);
+        field.clear();
+        field.sendKeys(summary);
     }
 
     public void enterDescription(String description) {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(descriptionContent)).sendKeys(description);
+        WebElement field = waitForVisible(descriptionContent);
+        field.clear();
+        field.sendKeys(description);
     }
 
     public boolean isCreateButtonDisabled() {
         try {
-            wait.until(ExpectedConditions.presenceOfElementLocated(createButtonDisabled));
+            waitForVisible(createButtonDisabled);
             return true;
         } catch (Exception e) {
             return false;
@@ -39,10 +52,6 @@ public class CreateIssuePage {
     }
 
     public void clickCreate() {
-        wait.until(ExpectedConditions.elementToBeClickable(createButton)).click();
-    }
-
-    public String getSummaryRequiredError() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(requiredError)).getText();
+        waitForClickable(createButton).click();
     }
 }

@@ -1,10 +1,6 @@
-package org.example.services;
+package org.example.pages;
 
 import org.example.BasePageTest;
-import org.example.pages.CreateIssuePage;
-import org.example.pages.DashboardPage;
-import org.example.pages.IssuePage;
-import org.example.pages.LoginPage;
 import org.junit.jupiter.api.*;
 
 public class IssueTestPage extends BasePageTest {
@@ -38,7 +34,7 @@ public class IssueTestPage extends BasePageTest {
         }
     }
 
-    @DisplayName("TC-I1: Успешное создание Issue и клик по уведомлению")
+    @DisplayName("TC-I1: Успешное создание Issue с валидными полями")
     @Test
     public void testCreateIssueValid() {
         String summary = "TC-I1 Issue " + System.currentTimeMillis();
@@ -64,7 +60,7 @@ public class IssueTestPage extends BasePageTest {
                 "Ожидалась неактивная кнопка 'Create' при пустом поле Summary, но кнопка активна.");
     }
 
-    @DisplayName("TC-I3: Редактирование Issue — изменение summary и description")
+    @DisplayName("TC-I3: Успешное редактирование summary и description")
     @Test
     public void testEditIssue() {
         String originalSummary = "TC-I3 Original Summary";
