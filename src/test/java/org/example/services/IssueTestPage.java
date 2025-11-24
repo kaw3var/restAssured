@@ -11,51 +11,43 @@ public class IssueTestPage extends BasePageTest {
 
     private final String VALID_USER = "admin";
     private final String VALID_PASS = "admin";
+    private String currentIssueId;
 
-    // Убрали лишний клик на Issues Link, начинаем с Dashboard
     @BeforeEach
     public void setupLogin() {
         new LoginPage(getDriver()).login(VALID_USER, VALID_PASS);
-        DashboardPage dashboard = new DashboardPage(getDriver());
-        dashboard.clickIssuesLink();
+        new DashboardPage(getDriver()).clickIssuesLink();
     }
 
-    // Вспомогательный метод 1: Создает Issue и возвращает ID
-    private String createIssueAndGetId(String summary, String description) {
-        DashboardPage dashboard = new DashboardPage(getDriver());
-        // Добавляем переход на Dashboard, чтобы гарантировать, что мы не находимся на странице Issue
-        // (Обычно не нужно, если @BeforeEach работает правильно, но это мера изоляции)
-        // dashboard.goToDashboard();
-        dashboard.clickCreateIssue();
+    @AfterEach
+    public void cleanupIssue() {
+        if (currentIssueId != null && !currentIssueId.isEmpty()) {
+            try {
+                String issueUrl = getDriver().getCurrentUrl().split("/issue/")[0] + "/issue/" + currentIssueId;
+                getDriver().navigate().to(issueUrl);
 
-        CreateIssuePage createPage = new CreateIssuePage(getDriver());
-        createPage.enterSummary(summary);
-        createPage.enterDescription(description);
-        createPage.clickCreate();
+                IssuePage issuePage = new IssuePage(getDriver());
+                issuePage.deleteIssue();
+                issuePage.isDeletionSuccessAlertPresent();
 
-        IssuePage issuePage = new IssuePage(getDriver());
-        // Клик по уведомлению, который переводит на страницу Issue
-        return issuePage.clickIssueLinkInAlert();
+            } catch (Exception e) {
+                System.err.println("Cleanup failed for Issue ID: " + currentIssueId + ". Error: " + e.getMessage());
+            } finally {
+                currentIssueId = null;
+            }
+        }
     }
-
-    // Вспомогательный метод 2: Создает Issue и возвращает объект IssuePage (для удобства)
-    private IssuePage createIssueAndNavigate(String summary, String description) {
-        createIssueAndGetId(summary, description); // Выполняем создание и переход
-        return new IssuePage(getDriver()); // Возвращаем объект страницы, на которой мы находимся
-    }
-
-    // --- ИЗОЛИРОВАННЫЕ ТЕСТЫ ---
 
     @DisplayName("TC-I1: Успешное создание Issue и клик по уведомлению")
     @Test
     public void testCreateIssueValid() {
-        String testSummary = "Auto-test Issue " + System.currentTimeMillis();
-        String testDescription = "Description for TC-I1";
+        String summary = "TC-I1 Issue " + System.currentTimeMillis();
+        String description = "Description for TC-I1";
 
-        String issueId = createIssueAndGetId(testSummary, testDescription);
+        currentIssueId = createIssueAndGetId(summary, description);
 
-        Assertions.assertFalse(issueId.isEmpty(), "Issue ID не был получен.");
-        Assertions.assertTrue(issueId.matches("^[A-Z]+-\\d+$"), "ID не соответствует формату.");
+        Assertions.assertFalse(currentIssueId.isEmpty(), "Issue не создана, уведомление отсутствует");
+        Assertions.assertTrue(currentIssueId.matches("^[A-Z]+-\\d+$"), "ID задачи не соответствует формату");
     }
 
     @DisplayName("TC-I2: Ошибка при создании Issue без summary")
@@ -66,65 +58,58 @@ public class IssueTestPage extends BasePageTest {
 
         CreateIssuePage createPage = new CreateIssuePage(getDriver());
         createPage.enterSummary("");
-        createPage.enterDescription("Description is optional");
+        createPage.enterDescription("Description for TC-I2");
 
-        // Assertions.assertTrue проверяет состояние кнопки на странице CreateIssuePage
         Assertions.assertTrue(createPage.isCreateButtonDisabled(),
-                "Ожидалась неактивная кнопка 'Create'.");
+                "Ожидалась неактивная кнопка 'Create' при пустом поле Summary, но кнопка активна.");
     }
 
     @DisplayName("TC-I3: Редактирование Issue — изменение summary и description")
     @Test
     public void testEditIssue() {
-        String originalSummary = "Original Summary " + System.currentTimeMillis();
-        String originalDescription = "Original Description";
+        String originalSummary = "TC-I3 Original Summary";
+        String originalDescription = "Original Description for TC-I3";
 
-        // Создаем Issue и переходим на нее
-        IssuePage issuePage = createIssueAndNavigate(originalSummary, originalDescription);
+        currentIssueId = createIssueAndGetId(originalSummary, originalDescription);
 
-        String newSummary = "Edited Summary " + System.currentTimeMillis();
-        String newDescription = "Edited Description for TC-I3 " + System.currentTimeMillis();
+        String newSummary = "TC-I3 Edited Summary";
+        String newDescription = "Edited Description";
 
+        IssuePage issuePage = new IssuePage(getDriver());
         issuePage.clickEdit();
         issuePage.enterSummary(newSummary);
         issuePage.enterDescription(newDescription);
         issuePage.clickSave();
 
-        // Проверяем актуальные данные со страницы
-        Assertions.assertEquals(newSummary, issuePage.getSummaryText(),
-                "Summary не обновилось после редактирования.");
-        Assertions.assertEquals(newDescription, issuePage.getDescriptionText(),
-                "Description не обновилось после редактирования.");
+        Assertions.assertEquals(newSummary, issuePage.getSummaryText());
+        Assertions.assertEquals(newDescription, issuePage.getDescriptionText());
     }
 
     @DisplayName("TC-I4: Успешное удаление Issue")
     @Test
     public void testDeleteIssue() {
-        // Создаем Issue и переходим на нее
-        createIssueAndNavigate("Issue to be deleted " + System.currentTimeMillis(), "Description for deletion");
+        currentIssueId = createIssueAndGetId("TC-I4 Issue " + System.currentTimeMillis(), "Description");
 
         IssuePage issuePage = new IssuePage(getDriver());
         issuePage.deleteIssue();
 
-        // Проверяем, что появилось уведомление об успешном удалении
-        Assertions.assertTrue(issuePage.isDeletionSuccessAlertPresent(),
-                "Не появилось уведомление '...deleted'.");
+        Assertions.assertTrue(issuePage.isDeletionSuccessAlertPresent());
+        currentIssueId = null;
     }
 
     @DisplayName("TC-I5: Успешное добавление комментария")
     @Test
     public void testAddCommentToIssue() {
-        // Создаем Issue и переходим на нее
-        IssuePage issuePage = createIssueAndNavigate("Issue for comment " + System.currentTimeMillis(), "Description for comment");
+        currentIssueId = createIssueAndGetId("TC-I5 Issue", "Description");
 
-        String commentText = "My first autotest comment " + System.currentTimeMillis();
-
-        issuePage.enterComment(commentText);
+        String comment = "Comment TC-I5 " + System.currentTimeMillis();
+        IssuePage issuePage = new IssuePage(getDriver());
+        issuePage.enterComment(comment);
         issuePage.clickAddComment();
 
-        Assertions.assertEquals(commentText, issuePage.getFirstCommentText(),
-                "Текст комментария не совпадает.");
+        Assertions.assertEquals(comment, issuePage.getFirstCommentText(),
+                "Текст опубликованного комментария не соответствует введенному.");
         Assertions.assertTrue(issuePage.isCommentTimestampPresent(),
-                "Метка времени 'Commented' не появилась.");
+                "Метка времени 'Commented' не появилась, комментарий не опубликован.");
     }
 }

@@ -1,6 +1,9 @@
 package org.example;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.example.pages.CreateIssuePage;
+import org.example.pages.DashboardPage;
+import org.example.pages.IssuePage;
 import org.example.utils.TestResultLogger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +16,7 @@ import java.time.Duration;
 
 @ExtendWith(TestResultLogger.class)
 public class BasePageTest {
+
     private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
     @BeforeEach
@@ -20,11 +24,9 @@ public class BasePageTest {
         WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
-        // options.addArguments("--headless");
 
         driver.set(new ChromeDriver(options));
         getDriver().manage().window().maximize();
-        getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         getDriver().get("http://localhost:9091/login");
     }
 
@@ -38,5 +40,18 @@ public class BasePageTest {
 
     public static WebDriver getDriver() {
         return driver.get();
+    }
+
+    public String createIssueAndGetId(String summary, String description) {
+        DashboardPage dashboard = new DashboardPage(getDriver());
+        dashboard.clickCreateIssue();
+
+        CreateIssuePage createPage = new CreateIssuePage(getDriver());
+        createPage.enterSummary(summary);
+        createPage.enterDescription(description);
+        createPage.clickCreate();
+
+        IssuePage issuePage = new IssuePage(getDriver());
+        return issuePage.clickIssueLinkInAlert();
     }
 }
