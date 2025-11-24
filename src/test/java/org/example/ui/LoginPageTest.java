@@ -1,6 +1,8 @@
 package org.example.ui;
 
 import org.example.base.BasePageTest;
+import org.example.pages.DashboardPage;
+import org.example.pages.LoginPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

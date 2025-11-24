@@ -1,6 +1,6 @@
 package org.example.utils;
 
-import org.example.BasePageTest;
+import org.example.base.BasePageTest;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 import org.openqa.selenium.OutputType;

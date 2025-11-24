@@ -12,10 +12,11 @@ public abstract class BasePage {
 
     protected WebDriver driver;
     protected WebDriverWait wait;
+    static private final int TIMEOUT_SECONDS = 30;
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_SECONDS));
     }
 
     protected WebElement waitForVisible(By locator) {

@@ -1,9 +1,30 @@
 package org.example.ui;
 
 import org.example.base.BasePageTest;
+import org.example.pages.CreateIssuePage;
+import org.example.pages.DashboardPage;
+import org.example.pages.IssuePage;
 import org.junit.jupiter.api.*;
 
 public class IssuePageTest extends BasePageTest {
+
+    public String createIssueAndGetId(String summary, String description) {
+        DashboardPage dashboard = new DashboardPage(getDriver());
+        dashboard.clickCreateIssue();
+
+        CreateIssuePage createPage = new CreateIssuePage(getDriver());
+        createPage.enterSummary(summary);
+        createPage.enterDescription(description);
+        createPage.clickCreate();
+
+        IssuePage issuePage = new IssuePage(getDriver());
+        return issuePage.clickIssueLinkInAlert();
+    }
+
+    @BeforeEach
+    void login() {
+        performLogin();
+    }
 
     @DisplayName("TC-I1: Успешное создание Issue с валидными полями")
     @Test

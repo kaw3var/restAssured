@@ -1,7 +1,6 @@
 package org.example.base;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.example.pages.CreateIssuePage;
 import org.example.pages.DashboardPage;
 import org.example.pages.IssuePage;
 import org.example.pages.LoginPage;
@@ -29,9 +28,6 @@ public class BasePageTest {
         driver.set(new ChromeDriver());
         getDriver().manage().window().maximize();
         getDriver().get(BASE_URL + "/login");
-
-        new LoginPage(getDriver()).login(VALID_USER, VALID_PASS);
-        new DashboardPage(getDriver()).clickIssuesLink();
     }
 
     @AfterEach
@@ -44,21 +40,13 @@ public class BasePageTest {
         }
     }
 
-    public static WebDriver getDriver() {
-        return driver.get();
+    protected void performLogin() {
+        new LoginPage(getDriver()).login(VALID_USER, VALID_PASS);
+        new DashboardPage(getDriver()).clickIssuesLink();
     }
 
-    public String createIssueAndGetId(String summary, String description) {
-        DashboardPage dashboard = new DashboardPage(getDriver());
-        dashboard.clickCreateIssue();
-
-        CreateIssuePage createPage = new CreateIssuePage(getDriver());
-        createPage.enterSummary(summary);
-        createPage.enterDescription(description);
-        createPage.clickCreate();
-
-        IssuePage issuePage = new IssuePage(getDriver());
-        return issuePage.clickIssueLinkInAlert();
+    public static WebDriver getDriver() {
+        return driver.get();
     }
 
     private void cleanupIssue() {
@@ -67,7 +55,6 @@ public class BasePageTest {
         }
 
         try {
-            // Собираем URL конкретного Issue
             String issueUrl = BASE_URL + "/issue/" + currentIssueId;
             getDriver().navigate().to(issueUrl);
 

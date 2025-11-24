@@ -2,29 +2,32 @@ package org.example.base;
 
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
+import org.example.api.specifications.RequestSpec;
 import org.example.dto.IssueDTO;
 import org.example.dto.ProjectDTO;
 import org.junit.jupiter.api.BeforeAll;
 
-import static org.hamcrest.Matchers.*;
+import static io.restassured.RestAssured.given;
+import static org.example.api.specifications.ResponseSpec.status200;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class BaseTest {
     @BeforeAll
     public static void setup() {
         RestAssured.baseURI = "http://localhost:9091";
-        RestAssured.useRelaxedHTTPSValidation();
         System.out.println("========= BaseTest setup completed =========");
     }
 
-    static protected RequestSpecification request() {
-        return RestAssured
-                .given()
-                .header("Authorization", "Bearer perm-YWRtaW4=.NDMtMA==.Ohnd7h2sKBXtuMRaPgfd1woEFmAG4M")
-                .contentType("application/json")
-                .log().ifValidationFails();
-        // perm-YWRtaW4=.NDMtMA==.Ohnd7h2sKBXtuMRaPgfd1woEFmAG4M - pc
-        // perm-YWRtaW4=.NDQtMA==.2tVNLGVkhOpOMaJYo7FNssrkPJvia4 laptop
+    protected RequestSpecification request() {
+        return given()
+                .spec(RequestSpec.baseRequestSpec());
+
     }
+
+    protected RequestSpecification withFields(String fields) {
+        return given().spec(RequestSpec.withFields(fields));
+    }
+
 
     public String createIssueAndGetId(String summary, String description, String projectId) {
         IssueDTO issueDTO = new IssueDTO(summary, description, new ProjectDTO(projectId));
@@ -32,11 +35,10 @@ public class BaseTest {
         return request()
                 .body(issueDTO)
                 .when()
-                .post("/api/issues")
+                .post("/issues")
                 .then()
-                .statusCode(200)
+                .spec(status200())
                 .body("id", notNullValue())
                 .extract().path("id");
     }
-
 }
