@@ -1,6 +1,6 @@
-package org.example.services;
+package org.example.api;
 
-import org.example.BaseTest;
+import org.example.base.BaseTest;
 import org.example.dto.CommentDTO;
 import org.example.dto.IssueDTO;
 import org.example.dto.ProjectDTO;

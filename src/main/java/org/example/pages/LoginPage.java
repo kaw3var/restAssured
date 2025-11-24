@@ -3,13 +3,8 @@ package org.example.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import java.time.Duration;
 
-public class LoginPage {
-    private WebDriver driver;
-    private WebDriverWait wait;
+public class LoginPage extends BasePage {
 
     private By usernameField = By.xpath("//*[@id='username']");
     private By passwordField = By.xpath("//*[@id='password']");
@@ -17,28 +12,19 @@ public class LoginPage {
     private By alertMessage = By.xpath("//*[contains(text(), 'Incorrect username or password')]");
 
     public LoginPage(WebDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        super(driver);
     }
 
     public void enterUsername(String username) {
-        WebElement field = wait.until(ExpectedConditions.visibilityOfElementLocated(usernameField));
-        field.clear();
-        if (username != null && !username.isEmpty()) {
-            field.sendKeys(username);
-        }
+        type(usernameField, username);
     }
 
     public void enterPassword(String password) {
-        WebElement field = driver.findElement(passwordField);
-        field.clear();
-        if (password != null && !password.isEmpty()) {
-            field.sendKeys(password);
-        }
+        type(passwordField, password);
     }
 
     public void clickLogin() {
-        wait.until(ExpectedConditions.elementToBeClickable(loginButton)).click();
+        click(loginButton);
     }
 
     public void login(String username, String password) {
@@ -48,7 +34,7 @@ public class LoginPage {
     }
 
     public String getAlertMessageText() {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(alertMessage)).getText();
+        return waitForVisible(alertMessage).getText();
     }
 
     public boolean isInputHighlightedRed() {

@@ -1,4 +1,4 @@
-package org.example;
+package org.example.base;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.example.pages.CreateIssuePage;

@@ -1,9 +1,9 @@
-package org.example.pages;
+package org.example.ui;
 
-import org.example.BasePageTest;
+import org.example.base.BasePageTest;
 import org.junit.jupiter.api.*;
 
-public class IssueTestPage extends BasePageTest {
+public class IssuePageTest extends BasePageTest {
 
     @DisplayName("TC-I1: Успешное создание Issue с валидными полями")
     @Test

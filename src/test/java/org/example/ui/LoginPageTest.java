@@ -1,6 +1,6 @@
-package org.example.pages;
+package org.example.ui;
 
-import org.example.BasePageTest;
+import org.example.base.BasePageTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

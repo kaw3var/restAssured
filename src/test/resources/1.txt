@@ -1,6 +1,6 @@
-package org.example.services;
+package org.example.api;
 
-import org.example.BasePageTest;
+import org.example.base.BasePageTest;
 import org.example.pages.CreateIssuePage;
 import org.example.pages.DashboardPage;
 import org.example.pages.IssuePage;

@@ -1,6 +1,6 @@
-package org.example.services;
+package org.example.api;
 
-import org.example.BaseTest;
+import org.example.base.BaseTest;
 import org.example.dto.CommentDTO;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
