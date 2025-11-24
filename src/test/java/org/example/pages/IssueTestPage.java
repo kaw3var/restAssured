@@ -5,42 +5,10 @@ import org.junit.jupiter.api.*;
 
 public class IssueTestPage extends BasePageTest {
 
-    private final String VALID_USER = "admin";
-    private final String VALID_PASS = "admin";
-    private String currentIssueId;
-
-    @BeforeEach
-    public void setupLogin() {
-        new LoginPage(getDriver()).login(VALID_USER, VALID_PASS);
-        new DashboardPage(getDriver()).clickIssuesLink();
-    }
-
-    @AfterEach
-    public void cleanupIssue() {
-        if (currentIssueId != null && !currentIssueId.isEmpty()) {
-            try {
-                String issueUrl = getDriver().getCurrentUrl().split("/issue/")[0] + "/issue/" + currentIssueId;
-                getDriver().navigate().to(issueUrl);
-
-                IssuePage issuePage = new IssuePage(getDriver());
-                issuePage.deleteIssue();
-                issuePage.isDeletionSuccessAlertPresent();
-
-            } catch (Exception e) {
-                System.err.println("Cleanup failed for Issue ID: " + currentIssueId + ". Error: " + e.getMessage());
-            } finally {
-                currentIssueId = null;
-            }
-        }
-    }
-
     @DisplayName("TC-I1: Успешное создание Issue с валидными полями")
     @Test
     public void testCreateIssueValid() {
-        String summary = "TC-I1 Issue " + System.currentTimeMillis();
-        String description = "Description for TC-I1";
-
-        currentIssueId = createIssueAndGetId(summary, description);
+        currentIssueId = createIssueAndGetId("TC-I1 Issue " + System.currentTimeMillis(), "Description for TC-I1");
 
         Assertions.assertFalse(currentIssueId.isEmpty(), "Issue не создана, уведомление отсутствует");
         Assertions.assertTrue(currentIssueId.matches("^[A-Z]+-\\d+$"), "ID задачи не соответствует формату");
@@ -63,10 +31,7 @@ public class IssueTestPage extends BasePageTest {
     @DisplayName("TC-I3: Успешное редактирование summary и description")
     @Test
     public void testEditIssue() {
-        String originalSummary = "TC-I3 Original Summary";
-        String originalDescription = "Original Description for TC-I3";
-
-        currentIssueId = createIssueAndGetId(originalSummary, originalDescription);
+        currentIssueId = createIssueAndGetId("TC-I3 Original Summary " + System.currentTimeMillis(), "Original Description for TC-I3");
 
         String newSummary = "TC-I3 Edited Summary";
         String newDescription = "Edited Description";
@@ -96,7 +61,7 @@ public class IssueTestPage extends BasePageTest {
     @DisplayName("TC-I5: Успешное добавление комментария")
     @Test
     public void testAddCommentToIssue() {
-        currentIssueId = createIssueAndGetId("TC-I5 Issue", "Description");
+        currentIssueId = createIssueAndGetId("TC-I5 Issue " + System.currentTimeMillis(), "Description");
 
         String comment = "Comment TC-I5 " + System.currentTimeMillis();
         IssuePage issuePage = new IssuePage(getDriver());
