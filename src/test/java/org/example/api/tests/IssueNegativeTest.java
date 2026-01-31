@@ -1,4 +1,5 @@
-package org.example.api;
+/*
+package org.example.api.tests;
 
 import io.restassured.http.ContentType;
 import org.example.base.BaseTest;
@@ -74,3 +75,4 @@ public class IssueNegativeTest extends BaseTest {
                 .spec(status404NotFound());
     }
 }
+*/

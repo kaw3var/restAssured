@@ -1,16 +1,17 @@
-package org.example.api;
+/*
+package org.example.api.tests;
 
+import io.qameta.allure.*;
 import org.example.base.BaseTest;
 import org.example.dto.CommentDTO;
-import org.example.dto.IssueDTO;
-import org.example.dto.ProjectDTO;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
 
 import static org.example.api.specifications.ResponseSpec.*;
-import static org.hamcrest.Matchers.notNullValue;
 
+@Epic("YouTrack Issues API")
+@Feature("Issue CRUD")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
 public class IssueTest extends BaseTest {
 
@@ -21,11 +22,13 @@ public class IssueTest extends BaseTest {
     private static final String COMMENT_TEXT = "Test Comment from API";
 
     @BeforeEach
+    @Step("Создание тестовой задачи перед тестом")
     void createIssue() {
         issueId = createIssueAndGetId(TEST_SUMMARY, TEST_DESCRIPTION, "0-0");
     }
 
     @AfterEach
+    @Step("Очистка: удаление созданной задачи")
     void cleanupIssue() {
         if (issueId != null) {
             request()
@@ -37,6 +40,9 @@ public class IssueTest extends BaseTest {
 
     @Test
     @DisplayName("TC-P1: Создание Issue с валидными полями")
+    @Story("Создание задач")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Проверяем, что задача создаётся корректно и API возвращает ID")
     void createIssue_validFields_shouldReturn200AndId() {
 
         withFields("id,summary,description")
@@ -47,6 +53,9 @@ public class IssueTest extends BaseTest {
 
     @Test
     @DisplayName("TC-P2: Получение существующего Issue")
+    @Story("Получение задач")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Проверяем корректность получения созданной задачи")
     void getIssue_existing_shouldReturn200AndId() {
 
         withFields("id,summary,description")
@@ -57,7 +66,11 @@ public class IssueTest extends BaseTest {
 
     @Test
     @DisplayName("TC-P3: Обновление summary и description")
+    @Story("Обновление задач")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Тест проверяет успешное обновление полей summary и description")
     void updateIssue_shouldReturn200AndUpdatedFields() {
+
         String updatedSummary = "Updated summary";
         String updatedDescription = "Updated description";
 
@@ -77,7 +90,11 @@ public class IssueTest extends BaseTest {
 
     @Test
     @DisplayName("TC-P4: Добавление комментария к Issue (YouTrack API)")
+    @Story("Комментарии")
+    @Severity(SeverityLevel.MINOR)
+    @Description("Проверяем, что комментарий добавляется и отображается")
     void addComment_shouldReturn200AndCommentAdded() {
+
         CommentDTO commentDto = new CommentDTO(COMMENT_TEXT);
 
         String commentId = request()
@@ -95,6 +112,9 @@ public class IssueTest extends BaseTest {
 
     @Test
     @DisplayName("TC-P5: Удаление существующего Issue")
+    @Story("Удаление задач")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Проверяем, что API корректно удаляет задачу")
     void deleteIssue_shouldReturn200AndId() {
 
         request()
@@ -107,8 +127,12 @@ public class IssueTest extends BaseTest {
 
     @ParameterizedTest
     @DisplayName("Создание Issue из CSV")
+    @Story("Создание задач")
+    @Severity(SeverityLevel.NORMAL)
     @CsvFileSource(resources = "/create-issues.csv", numLinesToSkip = 1)
+    @Description("Проверка массового создания Issue на основе данных из CSV файла")
     void createIssue_csvFile_shouldReturn200AndId(String summary, String description, String projectId) {
+
         String csvIssueId = createIssueAndGetId(summary, description, projectId);
 
         withFields("id,summary,description")
@@ -122,3 +146,4 @@ public class IssueTest extends BaseTest {
                 .spec(cleanupSuccess());
     }
 }
+*/

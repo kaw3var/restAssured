@@ -1,6 +1,5 @@
 package org.example.utils;
 
-import org.example.base.BasePageTest;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 import org.openqa.selenium.OutputType;
@@ -15,14 +14,14 @@ import java.time.format.DateTimeFormatter;
 
 public class TestResultLogger implements TestWatcher {
 
-    @Override
-    public void testFailed(ExtensionContext context, Throwable cause) {
-        WebDriver driver = BasePageTest.getDriver();
-        if (driver != null) {
-            takeScreenshot(driver, context.getDisplayName());
-        }
-        System.out.println("TEST FAILED: " + context.getDisplayName());
-    }
+//    @Override
+//    public void testFailed(ExtensionContext context, Throwable cause) {
+//        WebDriver driver = BasePageTest.getDriver();
+//        if (driver != null) {
+//            takeScreenshot(driver, context.getDisplayName());
+//        }
+//        System.out.println("TEST FAILED: " + context.getDisplayName());
+//    }
 
     @Override
     public void testSuccessful(ExtensionContext context) {

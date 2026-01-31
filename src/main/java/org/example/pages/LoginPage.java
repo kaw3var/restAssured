@@ -6,8 +6,8 @@ import org.openqa.selenium.WebElement;
 
 public class LoginPage extends BasePage {
 
-    private By usernameField = By.xpath("//*[@id='username']");
-    private By passwordField = By.xpath("//*[@id='password']");
+    private By usernameField = By.xpath("//input[@id='username']");
+    private By passwordField = By.xpath("//input[@id='password']");
     private By loginButton = By.xpath("//button[@type='submit' or contains(text(), 'Log in')]");
     private By alertMessage = By.xpath("//*[contains(text(), 'Incorrect username or password')]");
 
